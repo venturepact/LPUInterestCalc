@@ -1,0 +1,11 @@
+/* new changes 22july sahil */
+	.new-textarea-outr{background-color: #fff; float: left; width: 100%;}
+body{min-height:500px;}
+.back-icon-new{color: #93979a;float: left; font-size: 14px; margin-right: 10px;margin-top:5px; width: auto;}
+.new-headertext{color:#2c333b;font-family: montserratlight;font-size:22px;float:left;}
+.header-text-new{float:left; width:auto; padding:13px 20px;}
+.navbar.bg-light {box-shadow:0 2px 1px 0 #cdcec8;border:none;}
+.tray-top{border-bottom:none;}
+.aside-left-panel{border-right:1px solid #cdcec8 !important;}
+.new-red-noti{background-color: #f27864;height: 10px;width: 10px;border-radius: 50px;border: 1px solid #e25a44;margin-top:10px;}
+.new-chatbox{border:1px solid #f07762;}

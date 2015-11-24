@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>jQuery Credit Card Validator Demo</title>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+    <script src="jquery.creditCardValidator.js"></script>
+    
+    <style>
+   
+ul,h4 {
+  list-style: none;
+   margin: 0;
+  padding: 0;
+  border: 0;
+  font-size: 100%;
+  font: inherit;
+  vertical-align: baseline;
+}
+
+form {
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  border-radius: 5px;
+  -webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  -moz-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  background-color: #f9f9f7;
+  border: 1px solid #fff;
+  margin: 0 auto 0;
+  left: 0;
+  padding: 13px 20px;
+  width: 287px;
+}
+
+form li {
+  margin: 8px 0;
+}
+form li .help {
+  color: #aaa;
+  display: block;
+  font-size: 11px;
+  font-weight: 400;
+  line-height: 14px;
+  padding-top: 14px;
+}
+form li .help a {
+  color: #76a1cd;
+}
+form label {
+  color: #555;
+  display: block;
+  font-size: 14px;
+  font-weight: 400;
+}
+form input {
+  background-color: #fff;
+  border: 1px solid #e5e5e5;
+  color: #333;
+  display: block;
+  font-size: 18px;
+  height: 32px;
+  padding: 0 5px;
+  width: 275px;
+  -moz-box-sizing: content-box;
+  -webkit-box-sizing: content-box;
+}
+form input::-webkit-input-placeholder {
+  color: #ddd;
+}
+form input:-moz-placeholder {
+  color: #ddd;
+  opacity: 1;
+}
+form input::-moz-placeholder {
+  color: #ddd;
+  opacity: 1;
+}
+form input:-ms-input-placeholder {
+  color: #ddd;
+}
+form input:focus {
+  outline: 1px solid #3388dd;
+}
+form #card_number {
+background-image: url(images.png), url(images.png);
+  background-position: 2px -121px, 260px -61px;
+  background-size: 120px 361px, 120px 361px;
+  background-repeat: no-repeat;
+  padding-left: 54px;
+  width: 225px;
+}
+form #card_number.visa {
+  background-position: 2px -163px, 260px -61px;
+}
+form #card_number.visa_electron {
+  background-position: 2px -205px, 260px -61px;
+}
+form #card_number.mastercard {
+  background-position: 2px -247px, 260px -61px;
+}
+form #card_number.maestro {
+  background-position: 2px -289px, 260px -61px;
+}
+form #card_number.discover {
+  background-position: 2px -331px, 260px -61px;
+}
+form #card_number.valid.visa {
+  background-position: 2px -163px, 260px -87px;
+}
+form #card_number.valid.visa_electron {
+  background-position: 2px -205px, 260px -87px;
+}
+form #card_number.valid.mastercard {
+  background-position: 2px -247px, 260px -87px;
+}
+form #card_number.valid.maestro {
+  background-position: 2px -289px, 260px -87px;
+}
+form #card_number.valid.discover {
+  background-position: 2px -331px, 260px -87px;
+}
+.vertical {
+  overflow: hidden;
+}
+body {
+  background-color: #fff;
+  color: #464640;
+  font-family: "ff-dagny-web-pro", "Helvetica Neue", Verdana, Geneva, Arial, Helvetica, sans-serif;
+  font-size: 19px;
+  font-weight: 100;
+  line-height: 28px;
+  padding-top: 56px;
+}
+.web{
+	font-family:tahoma;
+	size:12px;
+	top:10%;
+	border:1px solid #CDCDCD;
+	border-radius:10px;
+	padding:10px;
+	width:45%;
+	margin:auto;
+	height:270px;
+}
+h1{
+	margin:3px 0;
+	font-size:13px;
+	text-decoration:underline;
+	text-align:center;
+}
+.tLink{
+	font-family:tahoma;
+	size:12px;
+	padding-left:10px;
+	text-align:center;
+}
+.log{
+	padding-left:114px;
+	font-size:12px;
+	margin-top:10px;
+}
+
+    </style>
+    <link rel="stylesheet" href="css/demo.css"> 
+</head>
+<body>
+<div class='tLink'><strong>Tutorial Link:</strong> <a href='http://www.stepblogging.com/how-to-detect-credit-card-type-and-validate-numbers-using-jquery/'target='_blank'>Click Here</a></div><br/>
+<div class='web'>	
+	<h1>Detect and validate credit card numbers using jquery</h1>
+    <form>
+        <h4>Credit Card Number</h4>
+        <ul>
+            <li><input type="text" name="card_number" id="card_number" placeholder="1234 5678 9012 3456"></li>
+        </ul>
+    </form>
+	<p class="log"></p>
+</div>	
+</body>
+<script>
+    $(function() {
+        $('#card_number').validateCreditCard(function(result) {
+			$('.log').html('<strong>Card type: </strong>' + (result.card_type == null ? '-' : result.card_type.name)
+			 + '<br><strong>Valid: </strong>' + result.valid
+			 + '<br><strong>Length valid: </strong>' + result.length_valid
+			 + '<br><strong>Luhn valid: </strong>' + result.luhn_valid);
+            if(result.card_type == null)
+            {
+                $('#card_number').removeClass();
+            }
+            else
+            {
+                $('#card_number').addClass(result.card_type.name);
+            }
+            
+            if(!result.valid)
+            {
+                $('#card_number').removeClass("valid");
+            }
+            else
+            {
+                $('#card_number').addClass("valid");
+            }
+            
+        });
+    });
+</script>
+</html>
