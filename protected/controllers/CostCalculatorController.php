@@ -65,7 +65,27 @@ class CostCalculatorController extends Controller
 		foreach($branches as $branch){
 			$netWeight[$branch->id] = 0;
 		}
-		// CVarDumper::dump($_POST,10,1);die;
+		 // CVarDumper::dump($_POST,10,1);
+		 $questions = array();
+		 foreach ($_POST['option'] as $key => $question ) {
+		 	
+		 	$questions[$key] = $question[0]; 
+		 }
+
+		$calculatorOptionsWeightage = CalculatorOptionsWeightage::model()->findAllByAttributes(array('calculator_options_id'=>$questions));
+		$weightage =array();
+		foreach ($calculatorOptionsWeightage as $key => $w) {
+			// echo $w->id.',';
+			$branch = $w->calculatorBranches->name;
+			$weightage[$branch][] = $w->weightage;
+			
+		}
+		// CVarDumper::dump($weightage,10,1);die;
+		$calresult  = array();
+		foreach ($weightage as $key => $branch) {
+			$calresult[$key] = array_sum($branch);
+		}
+		
 		
 		foreach ($categories as $category) { 
 			foreach($category->calculatorQuestions as $question){
@@ -92,17 +112,12 @@ class CostCalculatorController extends Controller
 
 		if(isset($_POST['contact_email']))
 			$email = $_POST['contact_email'];
-		if(isset($_POST['contact_phone']))
-			$phone = $_POST['contact_phone'];
-		else
-			$phone = NULL;
-		
 		if(isset(Yii::app()->user->parentId)){
 			$user  = Users::model()->findByPk(Yii::app()->user->parentId);
 		}
 		else{
 			$user = $this->createNewUser($email);
-			$user->phone_number = $phone;
+			$user->phone_number =isset($_POST['contact_phone'])?$_POST['contact_phone']:NULL;
 			$user->update();
 
 		}
@@ -110,6 +125,7 @@ class CostCalculatorController extends Controller
 		$calculatorUser = new CalculatorUsers;
 		$calculatorUser->username = $user->username;
 		$calculatorUser->hash_val=base64_encode($calculatorUser->username);
+		$calculatorUser->is_user_lpu=1;
 		if(!empty($user->phone_number))
 			$calculatorUser->phone_number = $user->phone_number;
 		$calculatorUser->created = date('Y-m-d H:i:s');
@@ -121,18 +137,26 @@ class CostCalculatorController extends Controller
 			die;
 		}
 
+		foreach ($questions as $option) {
+			
+		
 		$result = new CalculatorBranchResult;
 		$result->users_id = $user->id;
 		$result->calculator_branches_id = $first_key;
 		$result->created = date('Y-m-d H:i:s');
 		$result->modified = date('Y-m-d H:i:s');
+		$result->calculator_option_id=$option;
+		$result->save();
+		}
 		if($result->save()){
 			$response['message'] = "You are most suited for ".$result->calculatorBranches->name;
 			$response['success'] = true;
+			$response['weight'] = json_encode($calresult);
 		}
 		else{
 			$response['message'] = "Result not calculated";
 			$response['success'] = false;
+			$response['weight'] = "";
 		}
 
 		echo json_encode($response);

@@ -354,7 +354,7 @@
 			<div class="modal-content modal-bg">
 				<div class="modal-body col-md-12 pt15 pb15 text-center fs22">
 		           <span id='result-message'></span>  
-
+		           <div id="barchart_values" style="height: 300px;"></div>	
 				</div>
 			</div>
 		</div>
@@ -364,6 +364,7 @@
 <script src="<?php echo Yii::app()->theme->baseUrl; ?>/style/js/jquery-1.11.2.min.js"></script>
 <script src="<?php echo Yii::app()->theme->baseUrl; ?>/style/js/parsley.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="https://www.google.com/jsapi?autoload={'modules':[{'name':'visualization','version':'1','packages':['corechart']}]}"></script>
 
 <script  type="text/javascript" src="<?php echo Yii::app()->theme->baseUrl; ?>/calculator/js/selectize.js"></script>
 <script type="text/javascript">
@@ -497,10 +498,10 @@ $(document).ready(function() {
 <script type="text/javascript">
     $(document).ready(function() {
     	$('#cost_calculator').find('input[type="submit"]').on('click',function () {  
+    	$('#update').val("Calculating..");
     	var that=$('#update');  
             //var that = $('#result'); 
             	if($("#cost_calculator").parsley().validate()){
-            	$('#update').val("Calculating..");
     			$('#result').modal('show');
 				console.log("hello");
             	var data=$("#cost_calculator").serialize();
@@ -512,14 +513,43 @@ $(document).ready(function() {
                     success: function (response) {
                     	//response = JSON.parse(response);
                         if (response.success) {
-    						console.log(response.message);
-    						$(that).val("Get My Stream");
+                        	$(that).val("Get My Stream");
                         	$('#result-message').html(response.message);
+                        	console.log(JSON.parse(response.weight));
+                        	var chartDataArray = JSON.parse(response.weight);
+
+                        	var chartData = [];
+                        	var header = ['Brand','weightage'];
+                        	chartData.push(header);
+                        	$.each(chartDataArray,function(index,value){
+                        		var newd = [index,value];
+                        		console.log(newd);
+                        		chartData.push(newd);
+                        	});
+                        	console.log(chartData);
+    						var data = google.visualization.arrayToDataTable(chartData);
+
+							var view = new google.visualization.DataView(data);
+						    // view.setColumns([0, 1,
+						    //                    { calc: "stringify",
+						    //                      sourceColumn: 1,
+						    //                      type: "string",
+						    //                      role: "annotation" },
+						    //                    2]);
+
+						      var options = {
+						        title: "Student Interest Calculator",
+						        width: 550,
+						        bar: {vertical: "95%"},
+						        legend: { position: "bottom" },
+						      };
+						      var chart = new google.visualization.BarChart(document.getElementById("barchart_values"));
+						      chart.draw(view, options);
+
                         	//that.modal('show');
                         	// console.log(response.message);
                         }
                         else {
-                        	
                             console.log(response.message);
                         }
                     },
