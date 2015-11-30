@@ -196,7 +196,11 @@ class CostCalculatorController extends Controller
     			$this->createNewClient($user);
     			return $user;
 			}else
-				CVarDumper::dump($user,10,1);
+				//return $user;
+				CVarDumper::dump($user,10,1);die;
+    	}
+    	else{
+    		return $user;
     	}
 
 	}
